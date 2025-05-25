@@ -166,4 +166,39 @@ class AuthController extends Controller
     
 }
 
+public function me()
+{
+    try {
+        // Get the authenticated user
+        $user = auth()->user();
+        
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User not authenticated'
+            ], 401);
+        }
+        
+        // Return user information including the name
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                // Add other fields you want to expose
+                'created_at' => $user->created_at,
+                'updated_at' => $user->updated_at,
+            ]
+        ], 200);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Error retrieving user information',
+            'error' => $e->getMessage()
+        ], 500);
+    }
+}
+
 }
