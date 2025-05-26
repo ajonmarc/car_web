@@ -32,11 +32,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::get('/me', [AuthController::class, 'me']);
 
-        // Partner announcement routes - Using correct HTTP methods
-        Route::post('/partner/save', [AdminController::class, 'apiStoreAnnouncement']);
-        Route::put('/partner/update', [AdminController::class, 'apiUpdateAnnouncement']);
-        Route::get('/partner/list', [AdminController::class, 'apiGetAnnouncements']);
-        Route::delete('/partner/delete', [AdminController::class, 'apiDeleteAnnouncement']);
+       // Partner routes
+    Route::get('/partner/list', [AdminController::class, 'apiGetAnnouncements']);
+    Route::post('/partner/save', [AdminController::class, 'store']);
+    Route::put('/partner/update', [AdminController::class, 'update']);
+    Route::delete('/partner/delete', [AdminController::class, 'apiDeleteAnnouncement']);
     });
 });
 
