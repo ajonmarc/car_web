@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use App\Models\Demande;
 
 
 class AdminController extends Controller
@@ -392,4 +394,48 @@ class AdminController extends Controller
             }
         }
     }
+
+    public function incomingRents()
+{
+    $user = Auth::user(); // current partner
+
+    // Ensure only partners can access
+    if ($user->role != 1) {
+        return response()->json(['message' => 'Unauthorized'], 403);
+    }
+
+    // Get demandes for annonces created by this partner
+    $demandes = Demande::with(['annoncedispo.annonce', 'user'])
+        ->whereHas('annoncedispo.annonce', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })
+        ->get();
+
+    return response()->json($demandes);
+}
+
+
+public function updateRentStatus(Request $request, $id, $action)
+{
+    $user = Auth::user();
+
+    if (!in_array($action, ['accept', 'reject'])) {
+        return response()->json(['message' => 'Invalid action'], 400);
+    }
+
+    $demande = Demande::with('annoncedispo.annonce')->findOrFail($id);
+
+    if ($demande->annoncedispo->annonce->user_id !== $user->id) {
+        return response()->json(['message' => 'Unauthorized'], 403);
+    }
+
+    $demande->state = $action === 'accept' ? 'accepted' : 'rejected';
+    $demande->save();
+
+    return response()->json(['message' => 'Demande updated successfully']);
+}
+
+
+
+
 }

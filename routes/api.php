@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\ClientController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +38,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/partner/save', [AdminController::class, 'store']);
     Route::put('/partner/update', [AdminController::class, 'update']);
     Route::delete('/partner/delete', [AdminController::class, 'apiDeleteAnnouncement']);
+
+   Route::get('/client/list', [ClientController::class, 'apiClientAnnouncements']);
+Route::post('/client/book', [ClientController::class, 'bookCar']);
+Route::get('/client/filter-options', [ClientController::class, 'getFilterOptions']);
+Route::get('/client/bookings', [ClientController::class, 'getUserBookings']);
+Route::post('/client/cart/add', [ClientController::class, 'addToCart']);
+
+Route::get('/client/myRents', [ClientController::class, 'myRents']);
+Route::post('/client/cancelRent', [ClientController::class, 'cancelRent']);
+
+Route::get('/partner/incomingRents', [AdminController::class, 'incomingRents']);
+    Route::post('/partner/demandes/{id}/{action}', [AdminController::class, 'updateRentStatus']);
+
     });
 });
 
